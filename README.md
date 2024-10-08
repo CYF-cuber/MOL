@@ -9,7 +9,7 @@ Data preparation: The dataset should follow such folder structure.
 
 ```
 │data/
-├──CASME2/
+├──CASME2_data_5/
 │  ├── disgust
 │  │   ├── 01_EP19_05f
 │  │   │   ├── img1.jpg
@@ -18,7 +18,7 @@ Data preparation: The dataset should follow such folder structure.
 │  ├── surprise
 │  │   ├── ......
 
-├──SMIC/
+├──SMIC_data_3/
 │  ├── surprise
 │  │   ├── s9_sur_03
 │  │   │   ├── image090823.jpg
@@ -27,7 +27,7 @@ Data preparation: The dataset should follow such folder structure.
 │  ├── negative
 │  │   ├── ......
 
-├──SAMM/
+├──SAMM_data_5/
 │  ├── anger
 │  │   ├── 006_1_2
 │  │   │   ├── 006_05562.jpg
@@ -35,6 +35,7 @@ Data preparation: The dataset should follow such folder structure.
 │  │   │   ├── ......
 │  ├── contempt
 │  │   ├── ......
+|......
 ```
 ### Requirement
 ```
