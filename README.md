@@ -55,7 +55,7 @@ torchvision==0.14.0+cu116
 ### Train
 Run 'train.py' to train the model.
 ```
-python train.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_weight 0.5 --save_path saved_model/ --version V1.0 --seed 2024 --class_num 5
+python train.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_weight 0.5 --neighbor_num 4 --save_path saved_model/ --version V1.0 --seed 2024 --class_num 5
 ```
 
 ### Validate
