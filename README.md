@@ -52,14 +52,14 @@ torchsummary==1.5.1
 torchvision==0.14.0+cu116
 ```
 
-### Train
-Run 'train.py' to train the model.
+### Train & Evaluate
+Run 'main.py' to train and evaluate the model.
 ```
-python train.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_weight 0.5 --neighbor_num 4 --save_path saved_model/ --version V1.0 --seed 2024 --class_num 5
+python main.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_weight 0.5 --neighbor_num 4 --save_path saved_model/ --version V1.0 --seed 2024 -- dataset SAMM --class_num 5 
 ```
 
-### Validate
-Run 'eval.py' to validate.
+### Test
+Run 'test.py' to validate.
 ```
-python eval.py --model_path saved_model/V1.0.pth --output_path output/ 
+python test.py --model_path saved_model/V1.0.pth --output_path output/ 
 ```
