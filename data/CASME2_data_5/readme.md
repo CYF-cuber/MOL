@@ -1,5 +1,7 @@
 Please organize the dataset as such folder structure.
 
+```
+
 ├──CASME2_data_5/
 │  ├── disgust
 │  │   ├── 01_EP19_05f
@@ -8,3 +10,4 @@ Please organize the dataset as such folder structure.
 │  │   │   ├── ......
 │  ├── surprise
 │  │   ├── ......
+```
