@@ -55,7 +55,7 @@ torchvision==0.14.0+cu116
 
 ###Preparation
 1. Download [Dlib 68_landmarks predictor weight](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2) to ./utils
-2. Run 'dataset.py' to make training and testing dataset.
+2. Run 'dataset.py' to make training and testing datasets.
 ```
 python dataset.py --dataset SAMM --class_num 5 
 ```
