@@ -212,50 +212,43 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if args.dataset == "CASME2" and args.cls== 3:
-        surprisepath_c = '../CASME2_data_3/surprise/'
-        positivepath_c = '../CASME2_data_3/positive/'
-        negativepath_c = '../CASME2_data_3/negative/'
+        surprisepath_c = './data/CASME2_data_3/surprise/'
+        positivepath_c = './data/CASME2_data_3/positive/'
+        negativepath_c = './data/CASME2_data_3/negative/'
         VIDEO_LIST = [surprisepath_c, positivepath_c, negativepath_c]
         LOSO = ['17', '26', '16', '09', '05', '24', '02', '13', '04', '23', '11', '12', '08', '14', '03', '19', '01', '10', '20', '21', '22', '15', '06', '25', '07']
-        #[7, 8, 10, 12, 13, 17, 18, 19, 20, 24]
-        #LOSO = ['17', '26', '16', '09', '05', '24', '02', '23', '12',  '03', '19', '01', '15', '06', '25']
-        #LOSO = ['13', '14', '03']
 
     if args.dataset == "SAMM" and args.cls== 3:
-        surprisepath_s = '../SAMM_data_3/surprise/'
-        positivepath_s = '../SAMM_data_3/positive/'
-        negativepath_s = '../SAMM_data_3/negative/'
+        surprisepath_s = './data/SAMM_data_3/surprise/'
+        positivepath_s = './data/SAMM_data_3/positive/'
+        negativepath_s = './data/SAMM_data_3/negative/'
         VIDEO_LIST = [surprisepath_s, positivepath_s, negativepath_s]
         LOSO =['006','007','009','010','011','012','013','014','015','016','017','018','019','020','021','022','023','024','026','028','030','031','032','033','034','035','036','037']
-        #[3, 6, 12,  14,  16, 17, 18, 19,  20,  21, 22,  24,  26,  27]
-        #LOSO =['006','007','009','011','012','014','015','016','017','018','020','022','033','035']
 
-        #LOSO  cate 3 without subject 025
     if args.dataset == "SMIC":
-        surprisepath_sm = '../SMIC_data_3/surprise/'
-        positivepath_sm = '../SMIC_data_3/positive/'
-        negativepath_sm = '../SMIC_data_3/negative/'
+        surprisepath_sm = './data/SMIC_data_3/surprise/'
+        positivepath_sm = './data/SMIC_data_3/positive/'
+        negativepath_sm = './data/SMIC_data_3/negative/'
         VIDEO_LIST = [surprisepath_sm, positivepath_sm, negativepath_sm]
         LOSO = ['s1','s2','s3','s4','s5','s6','s8','s9','s11','s12','s13','s14','s15','s18','s19','s20']
       
     if args.dataset == "CASME2" and args.cls== 5:
-        surprise_path = '../CASME2_data_5/surprise/'
-        happiness_path = '../CASME2_data_5/happiness/'
-        disgust_path = '../CASME2_data_5/disgust/'
-        repression_path = '../CASME2_data_5/repression/'
-        others_path = '../CASME2_data_5/others/'
+        surprise_path = './data/CASME2_data_5/surprise/'
+        happiness_path = './data/CASME2_data_5/happiness/'
+        disgust_path = './data/CASME2_data_5/disgust/'
+        repression_path = './data/CASME2_data_5/repression/'
+        others_path = './data/CASME2_data_5/others/'
         VIDEO_LIST = [surprise_path , happiness_path, disgust_path , repression_path , others_path]
         LOSO = ['01', '17', '26', '16', '09', '05', '24', '02', '13', '04', '23', '11', '12', '08', '14', '03', '19', '10', '20', '21', '22', '15', '06', '25', '07']
-        #LOSO = ['25', '07']
+
     if args.dataset == "SAMM" and args.cls== 5:
-        surprise_path = '../SAMM_data_5/surprise/'
-        happiness_path = '../SAMM_data_5/happiness/'
-        anger_path = '../SAMM_data_5/anger/'
-        contempt_path = '../SAMM_data_5/contempt/'
-        others_path = '../SAMM_data_5/others/'
+        surprise_path = './data/SAMM_data_5/surprise/'
+        happiness_path = './data/SAMM_data_5/happiness/'
+        anger_path = './data/SAMM_data_5/anger/'
+        contempt_path = './data/SAMM_data_5/contempt/'
+        others_path = './data/SAMM_data_5/others/'
         VIDEO_LIST = [surprise_path , happiness_path, anger_path , contempt_path , others_path]
-        #LOSO =['006','007','009','010','011','012','013','014','015','016','017','018','019','020','021','022','023','024','025','026','028','030','031','032','033','034','035','036','037']
-        # del '024'
+
         LOSO =['006','007','009','010','011','012','013','014','015','016','017','018','019','020','021','022','023','025','026','028','030','031','032','033','034','035','036','037']
 
 
@@ -283,7 +276,7 @@ if __name__ == "__main__":
             mode = 'train'
         else:
             mode = 'test'
-        save_path = '.data/'+args.dataset+'/sub'+subject+'_'+str(args.cls)+'cls_'+mode+'.pth'
+        save_path = '.data_processed/'+args.dataset+'/sub'+subject+'_'+str(args.cls)+'cls_'+mode+'.pth'
         print(save_path)
 
         #print(train_list)
