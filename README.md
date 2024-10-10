@@ -59,7 +59,7 @@ python main.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_
 ```
 
 ### Test
-Run 'test.py' to validate.
+Run 'test.py' to test.
 ```
 python test.py --model_path saved_model/V1.0.pth --output_path output/ 
 ```
