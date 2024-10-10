@@ -18,15 +18,6 @@ Data preparation: The datasets like [CASME II](http://casme.psych.ac.cn/casme/c2
 │  ├── surprise
 │  │   ├── ......
 
-├──SMIC_data_3/
-│  ├── surprise
-│  │   ├── s9_sur_03
-│  │   │   ├── image090823.jpg
-│  │   │   ├── image090824.jpg
-│  │   │   ├── ......
-│  ├── negative
-│  │   ├── ......
-
 ├──SAMM_data_5/
 │  ├── anger
 │  │   ├── 006_1_2
@@ -34,6 +25,15 @@ Data preparation: The datasets like [CASME II](http://casme.psych.ac.cn/casme/c2
 │  │   │   ├── 006_05563.jpg
 │  │   │   ├── ......
 │  ├── contempt
+│  │   ├── ......
+
+├──SMIC_data_3/
+│  ├── surprise
+│  │   ├── s9_sur_03
+│  │   │   ├── image090823.jpg
+│  │   │   ├── image090824.jpg
+│  │   │   ├── ......
+│  ├── negative
 │  │   ├── ......
 |......
 ```
