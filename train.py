@@ -107,7 +107,6 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
     model.eval()
     totalsamples = 0
     correct_samples = 0
-    epoch = 0
     L1_loss = nn.L1Loss()
     sequence_loss = nn.MSELoss(reduction="mean")
     pred_list = []
@@ -161,8 +160,8 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
                     batch_loss = batch_loss + frame_loss
                 ldm_loss = ldm_loss+batch_loss
 
-        correct_samples += cal_corr(label_list, pred_list, confusion_matrix)
-        totalsamples += len(label_list)
+            correct_samples += cal_corr(label_list, pred_list, confusion_matrix)
+            totalsamples += len(label_list)
         acc = correct_samples * 100.0 / totalsamples
         print('-----epoch:{}-----'.format(epoch))
         print("acc:{}%".format(acc))
