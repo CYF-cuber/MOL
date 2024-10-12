@@ -98,6 +98,9 @@ if __name__ == "__main__":
             print("loading model.....")
             pretrain_weight = torch.load(args.pretrained_path)
             model.load_state_dict(pretrain_weight,strict = False)
+        
+        if args.save_path is None:
+            args.save_path = 'saved_models/' + args.version + '_' + args.dataset + '_' + subject +'_' + str(args.cls)+'cls.pth'
 
         
             
