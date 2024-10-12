@@ -32,6 +32,7 @@ class MOL(nn.Module):
                 param.requires_grad = False
 
     def forward(self, x):
+        x = x.permute(0,1,3,4,2)
         _,_,_,_, video_length = x.shape # [b, 1, 128, 128, 8]
         pred_ldm_list = []
         pred_flow_list = []
