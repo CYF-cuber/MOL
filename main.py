@@ -6,7 +6,6 @@ import argparse
 import torch
 import torch.nn as nn
 import torch.utils.data.dataloader as DataLoader
-from OF_3DCNN_train import train
 import random
 from MOL_model import MOL
 from train import train
