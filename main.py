@@ -66,8 +66,8 @@ if __name__ == "__main__":
 
 
 
-    test_log_file = open('MultiTasks_log/' + args.version + '_test_log.txt', 'w')
-    train_log_file = open('MultiTasks_log/' + args.version + '_train_log.txt', 'w')
+    test_log_file = open('logs/' + args.version + '_test_log.txt', 'w')
+    train_log_file = open('logs/' + args.version + '_train_log.txt', 'w')
     train_log_file.writelines('----------args----------\n')
     test_log_file.writelines('----------args----------\n')
 
