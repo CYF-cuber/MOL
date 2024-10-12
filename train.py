@@ -29,6 +29,7 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
         for i, item in enumerate(train_dataloader):
             print('-----epoch:{}  steps:{}/{}-----'.format(epoch, total_steps, args.num_steps))
             video, flow, ldm, label = item
+            ldm = ldm.permute(0,2,1)
             ldm_loss = torch.zeros(1).requires_grad_(True)
             OF_loss = torch.zeros(1).requires_grad_(True)
             optimizer.zero_grad()
@@ -126,6 +127,7 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
             OF_loss = torch.zeros(1).requires_grad_(True)
             ldm_loss = torch.zeros(1).requires_grad_(True)
             video, flow, ldm, label = item
+            ldm = ldm.permute(0,2,1)
             pred_mer,pred_flow, pred_ldm = model(video.to(device))
 
             pred_mer = F.log_softmax(pred_mer, dim=1)
