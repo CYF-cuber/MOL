@@ -119,4 +119,5 @@ if __name__ == "__main__":
                 ConfusionMatrix[i][j] +=subject_confusion_matrix[i][j]
     acc, war, uar, wf1, uf1 = calculate_metrics(ConfusionMatrix)
     test_log_file.writelines('----------final_results----------\n')
-    test_log_file.writelines('acc:\n{}\t\t war:\n{}\t\t uar:\n{}\t\t wf1:\n{}\t\t uf1:\n{}\t\t'.format(acc, war, uar, wf1, uf1))
+
+    test_log_file.writelines('acc:{}\t\t\n war:{}\t\t\n uar:{}\t\t\n wf1:{}\t\t\n uf1:{}\t\t\n'.format(acc, war, uar, wf1, uf1))
