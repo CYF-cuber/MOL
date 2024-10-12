@@ -63,7 +63,7 @@ python dataset.py --dataset SAMM --cls 5 --mode_train True
 ### Train & Evaluate
 Run 'main.py' to train and evaluate the model.
 ```
-python main.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_weight 0.5 --neighbor_num 4 --save_path saved_model/ --version V1.0 --seed 2024 --dataset SAMM --cls 3 
+python main.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 0.5 --ldm_weight 0.5 --neighbor_num 4 --version V1.0 --seed 2024 --dataset SAMM --cls 3 
 ```
 
 ### Test
