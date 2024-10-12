@@ -52,7 +52,7 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
 
                 flow_pred = flow_pred[index_of,:,:,:].permute(1,2,3,0).to(device)
                 loss = sequence_loss(flow_pred.to(torch.float32), flow_gt.to(torch.float32)).cpu()#, gamma=args.gamma, test_mode=False)
-                OF_loss = OF_loss + loss
+                
 
             for index in range(len(pred_ldm)):
                 ldm_frame_gt = ldm[:,index+1 , :]
@@ -64,6 +64,7 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
                     batch_loss = batch_loss + frame_loss
                 #print(frame_loss)
                 ldm_loss = ldm_loss+batch_loss
+            ldm_loss = ldm_loss/(len(pred_ldm)*68)
 
             print("ME_LOSS:",ME_loss ,"OF_loss:", OF_loss,"ldm_loss:", ldm_loss)
             final_loss =OF_loss.to(torch.float32) * args.of_weight + ldm_loss.to(torch.float32) * args.ldm_weight + ME_loss.to(torch.float32).to('cpu')* args.mer_weight
@@ -149,6 +150,7 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
 
                 loss = sequence_loss(flow_pred.float(), flow_gt.float()).cpu()
                 OF_loss = OF_loss + loss
+            OF_loss = OF_loss/
 
             for index in range(len(pred_ldm)):
                 ldm_frame_gt = ldm[:,index+1 , :]
@@ -159,6 +161,7 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
                     frame_loss = L1_loss(ldm_frame_gt[batch].to('cpu'),ldm_frame_pred[batch].to('cpu'))/pupil_dis
                     batch_loss = batch_loss + frame_loss
                 ldm_loss = ldm_loss+batch_loss
+            ldm_loss = ldm_loss/(len(pred_ldm)*68)
 
             correct_samples += cal_corr(label_list, pred_list, confusion_matrix)
             totalsamples += len(label_list)
