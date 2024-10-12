@@ -274,7 +274,7 @@ if __name__ == "__main__":
                     dataset_list[cla].append(v)
 
         #print(dataset_list)
-        if args.mode_train:
+        if args.mode_train==True:
             mode = 'train'
         else:
             mode = 'test'
