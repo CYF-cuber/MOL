@@ -164,13 +164,11 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
         correct_samples += cal_corr(label_list, pred_list, confusion_matrix)
         totalsamples += len(label_list)
         acc = correct_samples * 100.0 / totalsamples
-        weighted_f1_score = f1_score(label_list, pred_list, average="weighted") * 100
         print('-----epoch:{}-----'.format(epoch))
         print("acc:{}%".format(acc))
-        print("weighted f1 score:{}".format(weighted_f1_score))
 
         test_log_file.writelines('\n-----epoch:{}-----\n'.format(epoch))
-        test_log_file.writelines('acc:{}\t\tweighted_f1:{}\n'.format(acc, weighted_f1_score))
+        test_log_file.writelines('acc:{}'.format(acc))
         final_loss =OF_loss* args.of_weight + ldm_loss * args.ldm_weight + ME_loss.to('cpu') * args.mer_weight
 
         test_log_file.writelines('OF loss:{}\t\tLDM loss:{}\t\tME loss:{}\t\tFinal loss:{}\n'.format(OF_loss.item(),ldm_loss, ME_loss, final_loss))
