@@ -49,8 +49,8 @@ class MOL(nn.Module):
             frame_1_feat_flatten = frame_1_feat.reshape(b, c, h*w )
             frame_2_feat_flatten = frame_2_feat.reshape(b, c, h*w )
 
-            frame_1_neighbor_feat = get_graph_feature(frame_1_feat_flatten)
-            frame_2_neighbor_feat = get_graph_feature(frame_2_feat_flatten)
+            frame_1_neighbor_feat = get_graph_feature(frame_1_feat_flatten, k= self.neighbor_num)
+            frame_2_neighbor_feat = get_graph_feature(frame_2_feat_flatten, k= self.neighbor_num)
 
             frame_1_edge_feature = self.CCC_1(frame_1_feat_flatten,frame_1_neighbor_feat).reshape(b,c,h,w)
             frame_2_edge_feature = self.CCC_2(frame_2_feat_flatten,frame_2_neighbor_feat).reshape(b,c,h,w)
