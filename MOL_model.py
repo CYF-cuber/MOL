@@ -78,7 +78,7 @@ class MOL(nn.Module):
 
 if __name__ =='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--CLASS_NUM', type=int, default=5)
+    parser.add_argument('--cls', type=int, default=5)
     args = parser.parse_args()
 
     x = torch.ones(32, 1, 128, 128, 8).cuda()
