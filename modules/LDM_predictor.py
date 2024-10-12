@@ -16,7 +16,7 @@ class LDM_predictor(nn.Module):
         x = self.fc1(x)
         x = nn.ReLU(inplace=False)(x)
         x = self.fc2(x)
-        return x
+        return x.permute(0,2,1)
 if __name__ == '__main__':
     x = torch.ones(32, 128, 16, 16)
     model = LDM_predictor()
