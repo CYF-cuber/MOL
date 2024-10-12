@@ -12,6 +12,7 @@ class MOL(nn.Module):
     def __init__(self, args):
         super(MOL, self).__init__()
         self.cls_num = args.cls
+        self.neighbor_num = args.neighbor_num
         # for two frames independently
         self.conv_stack = Conv_stack()
         self.FCC_1 = FCC()
