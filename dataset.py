@@ -25,7 +25,6 @@ CROP_SIZE = 128
 LANDMARK_NUM = 68
 RANDOM_CROP_SAMPLE_NUM = 5
 CLIP_LENGTH = 8
-MODE_TRAIN = True
 
 def img_pre_dlib(detector,predictor,img_path,box_enlarge=2.5,img_size=ALIGN_SIZE):
     img = cv2.imread(img_path)#[:,80:560]
@@ -48,7 +47,9 @@ def crop_img_ldm(img, ldm, crop_x=8, crop_y=8,crop_size = CROP_SIZE, ldm_num = L
     return crop_img, crop_ldm
 
 class videoDataset(Dataset):
-    def __init__(self, video_path, load_data=False):
+    def __init__(self, video_path, mode_train=True):
+        self.mode_train = mode_train
+        
         self.video_list = []
         self.ldm_list = []
         self.flow_list = []
@@ -96,7 +97,7 @@ class videoDataset(Dataset):
         sample_landmarks = []
 
 
-        if MODE_TRAIN:
+        if self.mode_train:
             for j in range(sample_interval):
                 frames = []
                 landmarks = []
@@ -208,6 +209,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default="SAMM")
     parser.add_argument('--cls', type=int, default=3)
+    parser.add_argument('--mode_train',type=bool, default=True)
     parser.add_argument('--net_test',action='store_true')# bug test
     args = parser.parse_args()
     
@@ -272,7 +274,7 @@ if __name__ == "__main__":
                     dataset_list[cla].append(v)
 
         #print(dataset_list)
-        if MODE_TRAIN:
+        if args.mode_train:
             mode = 'train'
         else:
             mode = 'test'
