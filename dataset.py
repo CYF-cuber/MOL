@@ -209,7 +209,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default="SAMM")
     parser.add_argument('--cls', type=int, default=3)
-    parser.add_argument('--mode_train',type=bool, default=True)
+    parser.add_argument('--mode_train', default=True)
     parser.add_argument('--net_test',action='store_true')# bug test
     args = parser.parse_args()
     
