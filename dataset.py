@@ -276,7 +276,7 @@ if __name__ == "__main__":
             mode = 'train'
         else:
             mode = 'test'
-        save_path = '.data_processed/'+args.dataset+'/sub'+subject+'_'+str(args.cls)+'cls_'+mode+'.pth'
+        save_path = 'data_processed/'+args.dataset+'/sub'+subject+'_'+str(args.cls)+'cls_'+mode+'.pth'
         print(save_path)
 
         #print(train_list)
