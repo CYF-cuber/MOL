@@ -10,10 +10,11 @@ import random
 from MOL_model import MOL
 from train import train
 from utils.metrics import calculate_metrics
+from dataset import videoDataset
 
 def set_random_seed(SEED=2023):
     random.seed(SEED)
-    np.random.seed(SEED)
+    np.random.seed(np.int64(SEED))
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
     torch.cuda.manual_seed_all(SEED)
@@ -38,8 +39,9 @@ if __name__ == "__main__":
     parser.add_argument('--pretrained_path', default=None)
     parser.add_argument('--version', default='V1.0.0')
     parser.add_argument('--seed',default=2023)
+    parser.add_argument('--neighbor_num', type=int, default=4)
     parser.add_argument('--dataset',default='CASME2', help='CASME2, SAMM or SMIC.')
-    parser.add_argument('--cls',default=5, help='3 or 5. (3 for SMIC only)')
+    parser.add_argument('--cls',type=int, default=5, help='3 or 5. (3 for SMIC only)')
     args = parser.parse_args()
 
     set_random_seed(args.seed)
@@ -52,6 +54,7 @@ if __name__ == "__main__":
         LOSO = ['17', '26', '16', '09', '05', '24', '02', '13', '04', '23', '11', '12', '08', '14', '03', '19', '01', '10', '20', '21', '22', '15', '06', '25', '07']
 
     if args.dataset == "SAMM" and args.cls== 3:
+        #LOSO =['006','007']
         LOSO =['006','007','009','010','011','012','013','014','015','016','017','018','019','020','021','022','023','024','026','028','030','031','032','033','034','035','036','037']
 
     if args.dataset == "SMIC" and args.cls== 3:
@@ -77,18 +80,18 @@ if __name__ == "__main__":
     train_log_file.writelines('----------args----------\n')
     test_log_file.writelines('----------args----------\n')
 
-
+    print(LOSO)
     for sub in range(len(LOSO)):
         subject = LOSO[sub]
-        test_dataset = torch.load('processed_data/'+args.dataset+'/sub'+subject+'_'+str(args.cls)+'cls_test.pth')
+        test_dataset = torch.load('data_processed/'+args.dataset+'/sub'+subject+'_'+str(args.cls)+'cls_test.pth')
 
-        train_sub_list = LOSO-[subject]
+        train_sub_list = new_list = [item for item in LOSO if item != subject]
         for train_sub in range(len(train_sub_list)):
             train_subject = train_sub_list[train_sub]
             if train_sub == 0:
-                train_dataset = torch.load('processed_data/'+args.dataset+'/sub'+train_subject+'_'+str(args.cls)+'cls_train.pth')
+                train_dataset = torch.load('data_processed/'+args.dataset+'/sub'+train_subject+'_'+str(args.cls)+'cls_train.pth')
             else:
-                train_dataset = train_dataset + torch.load('processed_data/'+args.dataset+'/sub'+train_subject+'_'+str(args.cls)+'cls_train.pth')
+                train_dataset = train_dataset + torch.load('data_processed/'+args.dataset+'/sub'+train_subject+'_'+str(args.cls)+'cls_train.pth')
     
         model = MOL(args)
         if args.pretrained_path is not None:
@@ -112,4 +115,5 @@ if __name__ == "__main__":
             for j in range(len(ConfusionMatrix[0])):
                 ConfusionMatrix[i][j] +=subject_confusion_matrix[i][j]
     result = calculate_metrics(ConfusionMatrix)
+    test_log_file.writelines('----------final_results----------\n')
     test_log_file.writelines(result)
