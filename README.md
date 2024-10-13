@@ -48,9 +48,9 @@ opencv_python_headless==4.7.0.72
 Pillow==9.5.0
 scikit_learn==1.2.2
 spatial_correlation_sampler==0.4.0
-torch==1.13.0+cu116
+torch==1.13.0
 torchsummary==1.5.1
-torchvision==0.14.0+cu116
+torchvision==0.14.0
 ```
 
 ### Preparation
