@@ -150,7 +150,6 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
 
                 loss = sequence_loss(flow_pred.float(), flow_gt.float()).cpu()
                 OF_loss = OF_loss + loss
-            OF_loss = OF_loss/
 
             for index in range(len(pred_ldm)):
                 ldm_frame_gt = ldm[:,index+1 , :]
