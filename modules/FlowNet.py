@@ -41,13 +41,14 @@ def predict_flow(in_planes):
 
 
 def correlate(input1, input2):
-    out_corr = spatial_correlation_sample(input1,
-                                          input2,
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    out_corr = spatial_correlation_sample(input1.cpu(),
+                                          input2.cpu(),
                                           kernel_size=1,
                                           patch_size=21,
                                           stride=1,
                                           padding=0,
-                                          dilation_patch=2)
+                                          dilation_patch=2).to(device)
     # collate dimensions 1 and 2 in order to be treated as a
     # regular 4D tensor
     b, ph, pw, h, w = out_corr.size()
