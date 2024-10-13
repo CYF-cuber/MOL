@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 from torch.nn.init import kaiming_normal_, constant_
 #from spatial_correlation_sampler import spatial_correlation_sample as spatial_correlation_sample
-
+import spatial_correlation_sampler
+import torch.nn.functional as F
 try:
     from spatial_correlation_sampler import spatial_correlation_sample as spatial_correlation_sample
 except ImportError as e:
