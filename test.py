@@ -22,9 +22,11 @@ def test(args, model, test_dataset):
 
 if __name__ =='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', default='saved_model/V1.0.pth')
+    parser.add_argument('--model_path', default='saved_models/V1.0.pth')
     parser.add_argument('--test_dataset_path', help = 'videoDataset class object')
     parser.add_argument('--output_path',default='output/')
+    parser.add_argument('--cls',type=int, default=3, help='3 or 5. (3 for SMIC only)')
+    parser.add_argument('--neighbor_num', type=int, default=4)
     args = parser.parse_args()
 
     model = MOL(args)
