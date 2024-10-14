@@ -96,8 +96,6 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
     correct_samples = 0
     L1_loss = nn.L1Loss(reduction="sum")
     L2_loss = nn.MSELoss()
-    pred_list = []
-    label_list = []
 
     if args.cls == 5:
         confusion_matrix = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
@@ -105,7 +103,7 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
         confusion_matrix = [[0,0,0],[0,0,0],[0,0,0]]
 
 
-    test_dataloader = DataLoader.DataLoader(test_dataset, batch_size=48)
+    test_dataloader = DataLoader.DataLoader(test_dataset, batch_size=args.batch_size)
 
     with torch.no_grad():
         for i, item in enumerate(test_dataloader):
@@ -118,8 +116,8 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
             pred_mer = F.log_softmax(pred_mer, dim=1)
             ME_loss = F.nll_loss(pred_mer, label.to(device))
             _, pred = torch.max(pred_mer, dim=1)
-            pred_list.extend(pred.cpu().numpy().tolist())
-            label_list.extend(label.numpy().tolist())
+            pred_list = pred.cpu().numpy().tolist()
+            label_list = label.numpy().tolist()
             print('label:{} \n pred:{}'.format(label, pred))
             flow_loss = (L2_loss(pred_flow.to(torch.float32).cpu(), flow.to(torch.float32).cpu())/(CLIP_LENGTH-1))
             for index in range(CLIP_LENGTH - 1):
@@ -133,8 +131,9 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
                 #print(frame_loss)
                 ldm_loss = ldm_loss+batch_loss
             ldm_loss = ldm_loss/(len(pred_ldm)*LANDMARK_NUM)
-
-            correct_samples += cal_corr(label_list, pred_list, confusion_matrix)
+            correct_sample, confusion_matrix = cal_corr(label_list, pred_list, confusion_matrix)
+            #print(correct_sample, confusion_matrix)
+            correct_samples += correct_sample
             totalsamples += len(label_list)
         acc = correct_samples * 100.0 / totalsamples
         print('-----epoch:{}-----'.format(epoch))
@@ -156,4 +155,4 @@ def cal_corr(label_list, pred_list,confusion_matrix):
         confusion_matrix[a][b]+=1
         if a == b:
             corr += 1
-    return corr
+    return corr,confusion_matrix
