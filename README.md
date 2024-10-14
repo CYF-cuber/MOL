@@ -69,5 +69,5 @@ python main.py --lr 1e-4 --num_steps 1000 --batch_size 32 --of_weight 10 --ldm_w
 ### Test
 Run 'test.py' to test.
 ```
-python test.py --model_path saved_model/V1.0.pth --test_dataset_path data_processed/SAMM/sub018_3cls_test.pth --output_path output/ 
+python test.py --cls 3 --neighbor_num 4 --model_path saved_model/V1.0.pth --test_dataset_path data_processed/SAMM/sub018_3cls_test.pth --output_path output/ 
 ```
