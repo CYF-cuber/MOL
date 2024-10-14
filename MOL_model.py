@@ -34,8 +34,7 @@ class MOL(nn.Module):
     def forward(self, x):
         x = x.permute(0,1,3,4,2)
         _,_,_,_, video_length = x.shape # [b, 1, 128, 128, 8]
-        pred_ldm_list = []
-        pred_flow_list = []
+
         for index in range(video_length - 1):
             frame_1_origin = x[:, :, :, :, index]
             frame_2_origin = x[:, :, :, :, index + 1]
@@ -63,25 +62,26 @@ class MOL(nn.Module):
 
             if index == 0:
                 cross_feat = torch.cat([frame_1_feat.unsqueeze(-1), frame_2_feat.unsqueeze(-1)], dim=-1)
+                pred_ldm = self.ldm_predictor(frame_2_feat).unsqueeze(-1)
+                pred_flow = self.flownet([frame_1_origin, frame_2_origin], torch.cat((frame_1_feat.contiguous(), frame_2_feat.contiguous()), dim=1)).unsqueeze(-1)
+                
             else:
                 cross_feat = torch.cat([cross_feat, frame_1_feat.unsqueeze(-1)], dim=-1)
                 cross_feat = torch.cat([cross_feat, frame_2_feat.unsqueeze(-1)], dim=-1)
-
-            pre_ldm = self.ldm_predictor(frame_2_feat).contiguous()
-            pred_ldm_list.append(pre_ldm)
-            
-            pred_flow = self.flownet([frame_1_origin, frame_2_origin], torch.cat((frame_1_feat.contiguous(), frame_2_feat.contiguous()), dim=1))
-            pred_flow_list.append(pred_flow)
+                
+                pred_ldm = torch.cat([pred_ldm, self.ldm_predictor(frame_2_feat).unsqueeze(-1)], dim=-1)
+                pred_flow = torch.cat([pred_flow, self.flownet([frame_1_origin, frame_2_origin], torch.cat((frame_1_feat.contiguous(), frame_2_feat.contiguous()), dim=1)).unsqueeze(-1)], dim=-1)
 
         pre_mer = self.mer_3dcnn(cross_feat)
-        return pre_mer, pred_flow_list, pred_ldm_list
+        return pre_mer, pred_flow, pred_ldm
 
 if __name__ =='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--cls', type=int, default=5)
+    parser.add_argument('--neighbor_num', type=int, default=4)
     args = parser.parse_args()
 
-    x = torch.ones(32, 1, 128, 128, 8).cuda()
+    x = torch.ones(32, 1, 8, 128, 128).cuda()
     model = MOL(args).cuda()
     mer, flow, ldm = model(x)
-    print(mer.shape)
+    print(mer.shape, flow.shape, ldm.shape)
