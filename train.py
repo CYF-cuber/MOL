@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.utils.data.dataloader as DataLoader
 import torch.nn.functional as F
 from utils.pupil_distance import get_pupil_distance
+from dataset import CLIP_LENGTH, LANDMARK_NUM
 
 def train(args, model, train_dataset, test_dataset=None, train_log_file=None, test_log_file=None):
     
@@ -15,8 +16,8 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
     keep_training = True
     epoch = 0
     final_acc = 0
-    L1_loss = nn.L1Loss()
-    sequence_loss = nn.MSELoss(reduction="mean")
+    L1_loss = nn.L1Loss(reduction='sum')
+    L2_loss = nn.MSELoss()
 
     while keep_training:
         #torch.cuda.empty_cache()
@@ -29,34 +30,19 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
         for i, item in enumerate(train_dataloader):
             print('-----epoch:{}  steps:{}/{}-----'.format(epoch, total_steps, args.num_steps))
             video, flow, ldm, label = item
-            ldm = ldm.permute(0,2,1)
+            flow = flow.permute(0,1,3,4,2)
             ldm_loss = torch.zeros(1).requires_grad_(True)
             OF_loss = torch.zeros(1).requires_grad_(True)
             optimizer.zero_grad()
-
             pred_mer, pred_flow, pred_ldm = model(video.to(device))
             pred_mer = F.log_softmax(pred_mer, dim=1)
-
-            ME_loss = F.nll_loss(pred_mer, label.to(device))
-            #loss = F.nll_loss(output, label.to(device))
+            ME_loss = F.nll_loss(pred_mer.to(device), label.to(device))
             _, pred = torch.max(pred_mer, dim=1)
             print('label:{} \n pred:{}'.format(label, pred))
-            #print("ldm_len",len(ldm))
-            for index_of in range(len(flow) - 1):
-                flow_gt = flow[index_of, :, :, :, :].to(device) #[128,128,23,2]
-                for len_ in range(len(pred_flow)):
-                    if len_ ==0:
-                        flow_pred = pred_flow[0].unsqueeze(-1)
-                    else:
-                        flow_pred = torch.cat([flow_pred,pred_flow[len_].unsqueeze(-1)],dim=-1)
-
-                flow_pred = flow_pred[index_of,:,:,:].permute(1,2,3,0).to(device)
-                loss = sequence_loss(flow_pred.to(torch.float32), flow_gt.to(torch.float32)).cpu()#, gamma=args.gamma, test_mode=False)
-                
-
-            for index in range(len(pred_ldm)):
-                ldm_frame_gt = ldm[:,index+1 , :]
-                ldm_frame_pred = pred_ldm[index]
+            flow_loss = (L2_loss(pred_flow.to(torch.float32).cpu(), flow.to(torch.float32).cpu())/(CLIP_LENGTH-1))
+            for index in range(CLIP_LENGTH - 1):
+                ldm_frame_gt = ldm[:,:,index+1]
+                ldm_frame_pred = pred_ldm[:,:,index]
                 batch_loss =torch.zeros(1).requires_grad_(True)
                 for batch in range(len(ldm)):
                     pupil_dis = get_pupil_distance(ldm_frame_gt[batch])
@@ -64,10 +50,11 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
                     batch_loss = batch_loss + frame_loss
                 #print(frame_loss)
                 ldm_loss = ldm_loss+batch_loss
-            ldm_loss = ldm_loss/(len(pred_ldm)*68)
+            ldm_loss = ldm_loss/(len(pred_ldm)*LANDMARK_NUM)
 
-            print("ME_LOSS:",ME_loss ,"OF_loss:", OF_loss,"ldm_loss:", ldm_loss)
-            final_loss =OF_loss.to(torch.float32) * args.of_weight + ldm_loss.to(torch.float32) * args.ldm_weight + ME_loss.to(torch.float32).to('cpu')* args.mer_weight
+            print("ME_LOSS:",ME_loss ,"OF_loss:", flow_loss,"ldm_loss:", ldm_loss)
+            final_loss =flow_loss.to(torch.float32) * args.of_weight + ldm_loss.to(torch.float32) * args.ldm_weight + ME_loss.to(torch.float32).to('cpu')* args.mer_weight
+            
             final_loss.backward()
             optimizer.step()
 
@@ -78,11 +65,10 @@ def train(args, model, train_dataset, test_dataset=None, train_log_file=None, te
             acc = correct_samples / totalsamples
             print("batch_acc:{}%".format(batch_acc * 100))
             print("acc:{}%".format(acc * 100))
-
-
+            print('total_loss:{}'.format(final_loss))
             train_log_file.writelines('-----epoch:{}  steps:{}/{}-----\n'.format(epoch, total_steps, args.num_steps))
             train_log_file.writelines(
-                'OF loss:{}\t\tLDM loss:{}\t\tME loss:{}\t\tFinal loss:{}\n'.format(OF_loss.item(),ldm_loss.item(), ME_loss, final_loss))
+                'Flow loss:{}\t\tLDM loss:{}\t\tME loss:{}\t\tFinal loss:{}\n'.format(flow_loss,ldm_loss, ME_loss, final_loss))
             train_log_file.writelines('batch acc:{}\t\tacc:{}\n'.format(batch_acc * 100, acc * 100))
             total_steps += 1
 
@@ -108,8 +94,8 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
     model.eval()
     totalsamples = 0
     correct_samples = 0
-    L1_loss = nn.L1Loss()
-    sequence_loss = nn.MSELoss(reduction="mean")
+    L1_loss = nn.L1Loss(reduction="sum")
+    L2_loss = nn.MSELoss()
     pred_list = []
     label_list = []
 
@@ -127,40 +113,26 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
             OF_loss = torch.zeros(1).requires_grad_(True)
             ldm_loss = torch.zeros(1).requires_grad_(True)
             video, flow, ldm, label = item
-            ldm = ldm.permute(0,2,1)
+            flow = flow.permute(0,1,3,4,2)
             pred_mer,pred_flow, pred_ldm = model(video.to(device))
-
             pred_mer = F.log_softmax(pred_mer, dim=1)
             ME_loss = F.nll_loss(pred_mer, label.to(device))
             _, pred = torch.max(pred_mer, dim=1)
             pred_list.extend(pred.cpu().numpy().tolist())
             label_list.extend(label.numpy().tolist())
-
             print('label:{} \n pred:{}'.format(label, pred))
-
-            for index_of in range(len(flow) - 1):
-
-                flow_gt = flow[index_of, :, :, :, :].to(device) #[128,128,23,2]
-                for len_ in range(len(pred_flow)):
-                    if len_ ==0:
-                        flow_pred = pred_flow[0].unsqueeze(-1)
-                    else:
-                        flow_pred = torch.cat([flow_pred,pred_flow[len_].unsqueeze(-1)],dim=-1)
-                flow_pred = flow_pred[index_of,:,:,:].permute(1,2,3,0).to(device)
-
-                loss = sequence_loss(flow_pred.float(), flow_gt.float()).cpu()
-                OF_loss = OF_loss + loss
-
-            for index in range(len(pred_ldm)):
-                ldm_frame_gt = ldm[:,index+1 , :]
-                ldm_frame_pred = pred_ldm[index]
+            flow_loss = (L2_loss(pred_flow.to(torch.float32).cpu(), flow.to(torch.float32).cpu())/(CLIP_LENGTH-1))
+            for index in range(CLIP_LENGTH - 1):
+                ldm_frame_gt = ldm[:,:,index+1]
+                ldm_frame_pred = pred_ldm[:,:,index]
                 batch_loss =torch.zeros(1).requires_grad_(True)
                 for batch in range(len(ldm)):
                     pupil_dis = get_pupil_distance(ldm_frame_gt[batch])
                     frame_loss = L1_loss(ldm_frame_gt[batch].to('cpu'),ldm_frame_pred[batch].to('cpu'))/pupil_dis
                     batch_loss = batch_loss + frame_loss
+                #print(frame_loss)
                 ldm_loss = ldm_loss+batch_loss
-            ldm_loss = ldm_loss/(len(pred_ldm)*68)
+            ldm_loss = ldm_loss/(len(pred_ldm)*LANDMARK_NUM)
 
             correct_samples += cal_corr(label_list, pred_list, confusion_matrix)
             totalsamples += len(label_list)
@@ -170,9 +142,10 @@ def evaluate(args, model, epoch, test_dataset, test_log_file):
 
         test_log_file.writelines('\n-----epoch:{}-----\n'.format(epoch))
         test_log_file.writelines('acc:{}'.format(acc))
-        final_loss =OF_loss* args.of_weight + ldm_loss * args.ldm_weight + ME_loss.to('cpu') * args.mer_weight
+        final_loss =flow_loss* args.of_weight + ldm_loss * args.ldm_weight + ME_loss.to('cpu') * args.mer_weight
+        print('total_loss:{}'.format(final_loss))
 
-        test_log_file.writelines('OF loss:{}\t\tLDM loss:{}\t\tME loss:{}\t\tFinal loss:{}\n'.format(OF_loss.item(),ldm_loss, ME_loss, final_loss))
+        test_log_file.writelines('Flow loss:{}\t\tLDM loss:{}\t\tME loss:{}\t\tFinal loss:{}\n'.format(flow_loss,ldm_loss, ME_loss, final_loss))
         test_log_file.writelines('confusion_matrix:\n{}'.format(confusion_matrix))
 
     return acc, confusion_matrix
