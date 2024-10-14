@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--wdecay', type=float, default=0.001)
     parser.add_argument('--momentum', type=float, default=0.9)
     parser.add_argument('--ldm_weight', type=float, default=0.5)
-    parser.add_argument('--of_weight', type=float, default=0.5)
+    parser.add_argument('--of_weight', type=float, default=10)
     parser.add_argument('--mer_weight', type=float, default=1)
     parser.add_argument('--gamma', type=float, default=0.8, help='exponential weighting.')
     parser.add_argument('--save_path', default=None)
