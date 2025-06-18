@@ -1,5 +1,5 @@
 # MOL
-This repository is the PyTorch implementation of "MOL: Joint Estimation of Micro-Expression, Optical Flow, and Landmark via Transformer-Graph-Style Convolution". (TPAMI 2025)
+This repository is the PyTorch implementation of "[MOL: Joint Estimation of Micro-Expression, Optical Flow, and Landmark via Transformer-Graph-Style Convolution](https://arxiv.org/abs/2506.14511)". (TPAMI 2025)
 
 ### Overview
 <img src="figures/overview.png" style="zoom:45%;" />
